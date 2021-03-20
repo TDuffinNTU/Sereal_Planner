@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sereal</string>
+    <string name="navOpen">Open</string>
+    <string name="navClose">Close</string>
+</resources>
