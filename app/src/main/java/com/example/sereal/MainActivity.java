@@ -8,7 +8,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -25,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar mToolbar;
     Intent mIntent;
 
-    Map<Integer, Integer> NavActivities;
+    //TODO Boilerplate code into other classes. That or research ViewGroups
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +66,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
+        // Switching to different layouts when done
         switch (item.getItemId())
         {
             case R.id.nav_today:
-                finish();
-                overridePendingTransition(0,0);
-                startActivity(getIntent());
-                overridePendingTransition(0,0);
+                mDrawer.closeDrawers();
                 break;
             case R.id.nav_calendar:
                 mIntent.setClass(MainActivity.this, Calendar.class);
@@ -97,5 +93,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mDrawer.closeDrawers();
+    }
 }
