@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar mToolbar;
     Intent mIntent;
 
-    //TODO Boilerplate code into other classes. That or research ViewGroups
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mDrawer.closeDrawers();
                 break;
             case R.id.nav_calendar:
-                mIntent.setClass(MainActivity.this, Calendar.class);
+                mIntent.setClass(MainActivity.this, CalendarActivity.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_cards:

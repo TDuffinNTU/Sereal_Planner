@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import com.google.android.material.navigation.NavigationView;
 
 
-public class Calendar extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class CalendarActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout mDrawer;
     NavigationView mNavView;
@@ -72,19 +72,19 @@ public class Calendar extends AppCompatActivity implements NavigationView.OnNavi
                 mDrawer.closeDrawers();
                 break;
             case R.id.nav_today:
-                mIntent.setClass(Calendar.this, MainActivity.class);
+                mIntent.setClass(CalendarActivity.this, MainActivity.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_cards:
-                mIntent.setClass(Calendar.this, Cards.class);
+                mIntent.setClass(CalendarActivity.this, Cards.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_notes:
-                mIntent.setClass(Calendar.this, Notes.class);
+                mIntent.setClass(CalendarActivity.this, Notes.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_settings:
-                mIntent.setClass(Calendar.this, Settings.class);
+                mIntent.setClass(CalendarActivity.this, Settings.class);
                 startActivity(mIntent);
                 break;
         }

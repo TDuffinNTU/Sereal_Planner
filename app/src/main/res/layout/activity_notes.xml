@@ -19,37 +19,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id = "@+id/NotesConstraint">
 
         <include
             android:id="@+id/include2"
             layout="@layout/toolbar"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
-
-        <EditText
-            android:id="@+id/editTextTextMultiLine"
-            android:layout_width="267dp"
-            android:layout_height="274dp"
-            android:layout_marginTop="92dp"
-            android:elevation="2dp"
-            android:ems="10"
-            android:gravity="start|top"
-            android:inputType="textMultiLine"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="89dp"
-            android:layout_height="37dp"
-            android:layout_marginStart="184dp"
-            android:layout_marginTop="252dp"
-            android:elevation="2dp"
-            android:text="Edit"
-            app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
-            app:layout_constraintTop_toTopOf="@+id/editTextTextMultiLine" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -66,7 +66,7 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
                 mDrawer.closeDrawers();
                 break;
             case R.id.nav_calendar:
-                mIntent.setClass(Cards.this, Calendar.class);
+                mIntent.setClass(Cards.this, CalendarActivity.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_today:
@@ -90,10 +90,5 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
     protected void onRestart() {
         super.onRestart();
         mDrawer.closeDrawers();
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
     }
 }

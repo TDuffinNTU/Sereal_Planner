@@ -5,7 +5,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
@@ -23,7 +22,7 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
     Toolbar mToolbar;
     Intent mIntent;
 
-    //TODO Boilerplate code into other classes. That or research ViewGroups
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
                 mDrawer.closeDrawers();
                 break;
             case R.id.nav_calendar:
-                mIntent.setClass(Settings.this, Calendar.class);
+                mIntent.setClass(Settings.this, CalendarActivity.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_cards:
