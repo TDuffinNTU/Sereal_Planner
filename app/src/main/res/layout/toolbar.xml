@@ -8,10 +8,11 @@
         android:id="@+id/Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+        app:titleTextColor="?attr/textOnPrimaryCol"
+        android:background="?attr/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_baseline_menu_24" />
+        app:navigationIcon="@drawable/ic_baseline_menu_24"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

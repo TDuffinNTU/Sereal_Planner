@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSetter.GetTheme(this); // Set's context theme to light/dark
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToolbar = findViewById(R.id.Toolbar);
 
         // Setting up navigation bar
+        mToolbar.setTitle(getString(R.string.today_title));
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar,
@@ -97,4 +99,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRestart();
         mDrawer.closeDrawers();
     }
+
 }

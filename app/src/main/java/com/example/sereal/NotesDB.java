@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,12 @@ public class NotesDB extends SQLiteOpenHelper {
     private static final String KEY_TITLE = "title";
     private static final String KEY_CONTENTS = "contents";
     private static final String KEY_DATE = "date";
+    Context mContext;
 
     public NotesDB(Context context)
     {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -42,6 +45,12 @@ public class NotesDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void clearRows()
+    {
+        String q = "DELETE FROM " + TABLE_NOTES;
+        getWritableDatabase().execSQL(q);
+    }
+
     // Note creation
     void addNote(NoteStruct n)
     {
@@ -53,6 +62,7 @@ public class NotesDB extends SQLiteOpenHelper {
 
         // adding a row
         db.insert(TABLE_NOTES, null, v);
+        Toast.makeText(mContext, "Note added!", Toast.LENGTH_SHORT).show();
         db.close();
     }
 
@@ -75,14 +85,16 @@ public class NotesDB extends SQLiteOpenHelper {
             return null;
         }
 
+        NoteStruct n = new NoteStruct(
+                Integer.parseInt(c.getString(0)),
+                c.getString(1),
+                c.getString(2),
+                c.getString(3));
+
         c.close();
         db.close();
 
-        return new NoteStruct(
-                Integer.parseInt(c.getString(0)),
-                c.getString(1),
-                c.getString(3),
-                null);
+        return n;
     }
 
     // TODO if this becomes a problem it might be best to split out the query/looping code...
@@ -104,8 +116,8 @@ public class NotesDB extends SQLiteOpenHelper {
                 nlist.add(new NoteStruct(
                         Integer.parseInt(c.getString(0)),
                         c.getString(1),
-                        c.getString(3),
-                        null));
+                        c.getString(2),
+                        c.getString(3)));
 
             }
             while (c.moveToNext());
@@ -134,8 +146,8 @@ public class NotesDB extends SQLiteOpenHelper {
                 nlist.add(new NoteStruct(
                         Integer.parseInt(c.getString(0)),
                         c.getString(1),
-                        c.getString(3),
-                        null));
+                        c.getString(2),
+                        c.getString(3)));
 
             }
             while (c.moveToNext());
@@ -150,6 +162,12 @@ public class NotesDB extends SQLiteOpenHelper {
     // Updating a single  record
     public int updateNote(NoteStruct n)
     {
+        if(n.getID() == null)
+        {
+            // avoiding case of new notes being updated vs added
+            return -1;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
         v.put(KEY_TITLE, n.getTitle());
@@ -160,8 +178,19 @@ public class NotesDB extends SQLiteOpenHelper {
                 new String[]{String.valueOf(n.getID())});
 
         db.close();
+        Toast.makeText(mContext, "Note updated!", Toast.LENGTH_SHORT).show();
 
         return r;
+    }
+
+    public int removeNote(NoteStruct n)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_NOTES + " WHERE " + KEY_ID + " = " + String.valueOf(n.getID());
+        db.execSQL(query);
+
+        Toast.makeText(mContext, "Note deleted!", Toast.LENGTH_SHORT).show();
+        return 1;
     }
 
 }

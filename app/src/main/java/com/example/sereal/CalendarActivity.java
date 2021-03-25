@@ -27,6 +27,7 @@ public class CalendarActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSetter.GetTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
@@ -36,6 +37,7 @@ public class CalendarActivity extends AppCompatActivity implements NavigationVie
         mToolbar = findViewById(R.id.Toolbar);
 
         // Setting up navigation bar
+        mToolbar.setTitle(getString(R.string.calendar_title));
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar,

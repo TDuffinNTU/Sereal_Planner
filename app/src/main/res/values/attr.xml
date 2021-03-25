@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="headerCol" format="reference" />
+    <attr name="switchCompatTextCol" format="reference" />
+    <attr name="textOnPrimaryCol" format="reference" />
+    <attr name="setFontFamily" format="reference" />
+    <attr name="boldFamily" format="reference" />
+
+</resources>

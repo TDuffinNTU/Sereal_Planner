@@ -1,24 +1,23 @@
 package com.example.sereal;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.TextView;
-
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 
 public class Notes extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -28,15 +27,15 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
     Toolbar mToolbar;
     Intent mIntent;
     NotesDB mNotesDatabase;
-    List<NoteStruct> mAllNotes;
-    List<TextView> mAllNotesTxt;
     ConstraintLayout mConstraint;
-
-
-
+    RecyclerView mRecycler;
+    FloatingActionButton mNewNoteFAB;
+    NotesRecyclerAdapter mAdapter;
+    DateTimeFormatter mDTFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSetter.GetTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
@@ -45,8 +44,11 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         mConstraint = findViewById(R.id.NotesConstraint);
         mNavView = findViewById(R.id.NavMenu);
         mToolbar = findViewById(R.id.Toolbar);
+        mRecycler = findViewById(R.id.NotesRecycler);
+        mNewNoteFAB = findViewById(R.id.NotesFAB);
 
         // Setting up navigation bar
+        mToolbar.setTitle(getString(R.string.notes_title));
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar,
@@ -59,30 +61,26 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         // Intent init
         mIntent = new Intent(this,getClass());
 
-
-        // Test loading from DB
+        // loading from DB
         mNotesDatabase = new NotesDB(this);
-        mAllNotes = mNotesDatabase.getAllNotes();
-        mAllNotesTxt = new ArrayList<>();
-
-        for (NoteStruct n : mAllNotes)
-        {
-            TextView tv = new TextView(this);
-            tv.setText(n.getContents());
-            tv.setLayoutParams(new ConstraintLayout.LayoutParams
-                    (ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-            tv.setPadding(20,20,20, 20);
-            mAllNotesTxt.add(tv);
-            mConstraint.addView(tv);
-        }
-
-        // TODO Recycler view for notes
-        // TODO fix datetime formatting and reset db
 
 
+        // Recycler view for notes
+        mRecycler = findViewById(R.id.NotesRecycler);
+        mAdapter = new NotesRecyclerAdapter(this, mNotesDatabase);
+        mRecycler.setAdapter(mAdapter);
+        mRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        // TODO fix datetime formatting
+        mDTFormat = DateTimeFormatter.ofPattern(getString(R.string.date_format));
+        mNewNoteFAB.setOnClickListener(v -> {
+           mAdapter.AddNewNote();
+           mRecycler.scrollToPosition(0);
+        });
 
     }
+
+
 
     @Override
     public void onBackPressed()

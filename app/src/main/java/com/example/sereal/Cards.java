@@ -22,6 +22,7 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSetter.GetTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cards);
 
@@ -31,6 +32,7 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
         mToolbar = findViewById(R.id.Toolbar);
 
         // Setting up navigation bar
+        mToolbar.setTitle(getString(R.string.cards_title));
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar,

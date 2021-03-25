@@ -21,7 +21,136 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar" />
+        <include
+            android:id="@+id/include3"
+            layout="@layout/toolbar" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/actionbar_height"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/DarkModeSwitch"
+                    app:layout_constraintTop_toBottomOf="@+id/DarkModeSwitch">
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/DyslexicModeSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="24sp"
+                        android:layout_marginEnd="24sp"
+                        android:text="Dyslexic Mode"
+                        android:textColor="?attr/switchCompatTextCol"
+                        android:textSize="24sp"
+                        android:theme="@style/Theme.AppCompat"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/subheader1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:text="Toggles Roboto and OpenDyslexic font."
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/DyslexicModeSwitch"
+                        />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/DarkModeSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="24sp"
+                        android:layout_marginEnd="24sp"
+                        android:text="Dark Mode"
+                        android:textColor="?attr/switchCompatTextCol"
+                        android:textSize="24sp"
+                        android:theme="@style/Theme.AppCompat"
+                        app:layout_constraintTop_toBottomOf="@id/subheader1"/>
+
+                    <TextView
+                        android:id="@+id/subheader2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:text="Toggles between light and dark themes."
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/DarkModeSwitch"
+                        />
+
+                    <TextView
+                        android:id="@+id/header2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:text="Clear Database Data"
+                        android:textSize="24sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/subheader2" />
+
+                    <TextView
+                        android:id="@+id/subheader3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:text="This cannot be undone!"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/header2" />
+
+                    <Button
+                        android:layout_marginTop="8dp"
+                        android:id="@+id/deleteNotesBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Notes"
+                        android:layout_marginStart="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/subheader3"
+                        android:theme="@style/warnButton"
+                        />
+
+                    <Button
+                        android:id="@+id/deleteDaysBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Routines"
+                        android:layout_marginStart="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/deleteNotesBtn"
+                        android:theme="@style/warnButton"
+                        />
+
+                    <Button
+                        android:id="@+id/deleteCardsBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Routines"
+                        android:layout_marginStart="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/deleteDaysBtn"
+                        android:theme="@style/warnButton"
+                        />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            </LinearLayout>
+        </ScrollView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
