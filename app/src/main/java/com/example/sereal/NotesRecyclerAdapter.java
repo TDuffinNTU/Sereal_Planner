@@ -97,13 +97,17 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
               }
               notifyItemRemoved(this.getAdapterPosition());
             });
+            mDelete.hide();
 
             mContents.setOnFocusChangeListener((v, hasFocus) -> {
                 if(!hasFocus)
                 {
                     mNote.setContents(String.valueOf(mContents.getText()));
                     SaveNote(mNote);
+                    mDelete.hide();
                 }
+                else
+                    mDelete.show();
             });
 
             mTitle.setOnFocusChangeListener((v, hasFocus) -> {
@@ -111,7 +115,10 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
                 {
                     mNote.setTitle(String.valueOf(mTitle.getText()));
                     SaveNote(mNote);
-                }
+                    mDelete.hide();
+                } else
+                    mDelete.show();
+
             });
 
         }

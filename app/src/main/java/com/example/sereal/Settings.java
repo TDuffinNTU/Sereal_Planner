@@ -27,7 +27,7 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
     NavigationView mNavView;
     Toolbar mToolbar;
     Intent mIntent;
-    Button mDelNotes, mDelRoutines, mDelCards;
+    Button mDelNotes, mDelCards;
 
     // Settings items
     SwitchCompat mDarkMode, mDyslexicMode;
@@ -45,7 +45,6 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
         mDarkMode = findViewById(R.id.DarkModeSwitch);
         mDyslexicMode = findViewById(R.id.DyslexicModeSwitch);
         mDelNotes = findViewById(R.id.deleteNotesBtn);
-        mDelRoutines = findViewById(R.id.deleteDaysBtn);
         mDelCards = findViewById(R.id.deleteCardsBtn);
 
         // Setting up navigation bar
@@ -83,6 +82,10 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
         mDelNotes.setOnClickListener(v -> {
             DeleteDBDialog(v, "N");
         });
+
+        mDelCards.setOnClickListener(v -> {
+            DeleteDBDialog(v, "C");
+        });
     }
 
     private void DeleteDBDialog(View v, String dbname)
@@ -106,7 +109,7 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
                             break;
                         case"C":
                             CardsDB c = new CardsDB(this);
-                            // TODO c.clearRows();
+                            c.clearRows();
                             break;
                         default:
                             break;

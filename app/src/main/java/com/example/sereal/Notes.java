@@ -71,7 +71,6 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        // TODO fix datetime formatting
         mDTFormat = DateTimeFormatter.ofPattern(getString(R.string.date_format));
         mNewNoteFAB.setOnClickListener(v -> {
            mAdapter.AddNewNote();

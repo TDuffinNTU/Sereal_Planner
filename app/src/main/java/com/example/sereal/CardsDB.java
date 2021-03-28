@@ -3,9 +3,14 @@ package com.example.sereal;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,98 +18,164 @@ public class CardsDB extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "CardsDatabase";
-    private static final String TABLE_Cards = "Cards";
+
+    private static final String TABLE_CARDS = "Cards";
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
-    private static final String KEY_CONTENTS = "contents";
-    private static final String KEY_DATE = "date";
+    private static final String KEY_TIME = "time";
+    private static final String KEY_MON = "mondays";
+    private static final String KEY_TUE = "tuedays";
+    private static final String KEY_WED = "wednesdays";
+    private static final String KEY_THU = "thursdays";
+    private static final String KEY_FRI = "fridays";
+    private static final String KEY_SAT = "saturdays";
+    private static final String KEY_SUN = "sundays";
+    private static final String KEY_ALARM = "alarm";
+    private static final String KEY_NOTE_ID = "noteID";
+
+    private final Context mContext;
+    private final DateTimeFormatter mFormatter;
 
     public CardsDB(Context context)
     {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
+        mFormatter = DateTimeFormatter.ofPattern(mContext.getString(R.string.time_format));
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String args = "CREATE TABLE " +
-                TABLE_Cards + "(" +
+                TABLE_CARDS + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_TITLE + " TEXT," +
-                KEY_DATE + " TEXT," +
-                KEY_CONTENTS + " TEXT)";
+                KEY_TIME + " TEXT," +
+                KEY_MON + " TEXT," +
+                KEY_TUE + " TEXT," +
+                KEY_WED + " TEXT," +
+                KEY_THU + " TEXT," +
+                KEY_FRI + " TEXT," +
+                KEY_SAT + " TEXT," +
+                KEY_SUN + " TEXT," +
+                KEY_NOTE_ID + " INTEGER," +
+                KEY_ALARM + " TEXT)";
 
         db.execSQL(args);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_Cards);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARDS);
         onCreate(db);
     }
 
+    public void clearRows()
+    {
+        String q = "DELETE FROM " + TABLE_CARDS;
+        getWritableDatabase().execSQL(q);
+    }
+
     // Note creation
-    void addNote(CardStruct n)
+    void addCard(CardStruct n)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
-        // TODO v.put(KEY_x, n.getX());
+
+        PlaceValues(n, v);
 
         // adding a row
-        db.insert(TABLE_Cards, null, v);
+        db.insert(TABLE_CARDS, null, v);
         db.close();
     }
 
-    // retrieving Note
-    CardStruct getNote(int id)
+    private void PlaceValues(CardStruct n, ContentValues v) {
+        // places our data values into ContentValues
+        ArrayList<Boolean> days = n.getDays();
+
+        v.put(KEY_TITLE, n.getTitle());
+        v.put(KEY_TIME, mFormatter.format(n.getTime()));
+        v.put(KEY_MON, days.get(0));
+        v.put(KEY_TUE, days.get(1));
+        v.put(KEY_WED, days.get(2));
+        v.put(KEY_THU, days.get(3));
+        v.put(KEY_FRI, days.get(4));
+        v.put(KEY_SAT, days.get(5));
+        v.put(KEY_SUN, days.get(6));
+        v.put(KEY_ALARM, n.isAlarm());
+        try {
+            v.put(KEY_NOTE_ID, n.getNote().getID());
+        } catch(NullPointerException e)
+        {
+            e.printStackTrace();
+            v.put(KEY_NOTE_ID, "-1");
+        }
+    }
+
+    private CardStruct BuildStruct(Cursor c) {
+        // builds out the data structure for the card from the database
+        try
+        {
+            ArrayList<Boolean> days = new ArrayList<>();
+            boolean alarm;
+            NoteStruct note = null;
+
+            for(int i = 3; i <= 9; i++)
+            {
+                // load individual day cols into struct
+                days.add(c.getInt(i) > 0);
+            }
+
+            alarm = c.getInt(11) > 0;
+
+            // note id exists
+            int noteid = Integer.parseInt(c.getString(10));
+            if(noteid >= 0)
+            {
+                NotesDB ndb = new NotesDB(mContext);
+                note = ndb.getNote(noteid);
+            }
+
+            return new CardStruct(
+                    Integer.parseInt(c.getString(0)),
+                    c.getString(1),
+                    LocalTime.from(mFormatter.parse(c.getString(2))),
+                    alarm,
+                    note,
+                    days);
+
+        } catch(CursorIndexOutOfBoundsException e)
+        {
+            // catching cases where index supplied is not valid
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // retrieving Card
+    CardStruct getCard(int id)
     {
+        // query the database
         SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_CARDS + " WHERE " + KEY_ID + " = " + id;
 
-        Cursor c = db.query(TABLE_Cards, new String[] {KEY_ID, KEY_TITLE, KEY_CONTENTS, KEY_DATE},
-                KEY_ID + "=?",
-                new String[]{String.valueOf(id)},
-                null, null, null, null);
+        Cursor c = db.rawQuery(query, null);
 
-        // Note has been found
+        //Card has been found
         if (c != null)
         {
             c.moveToFirst();
         } else
         {
+            // id supplied was bogus!
             return null;
         }
 
-        c.close();
-        db.close();
-
-        return new CardStruct();
-    }
-
-    // TODO if this becomes a problem it might be best to split out the query/looping code...
-    // Query the database
-    public List<CardStruct> getCardsOnDate(String d)
-    {
-        List<CardStruct> list = new ArrayList<>();
-
-        // returning Cards made on 'd' date
-        String query = "SELECT * FROM " + TABLE_Cards + " WHERE " + KEY_DATE + " = " + d;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(query, null);
-
-        // looping through query results (if any)
-        if(c.moveToFirst())
-        {
-            do
-            {
-                list.add(new CardStruct());
-
-            }
-            while (c.moveToNext());
-        }
+        CardStruct card = BuildStruct(c);
 
         c.close();
         db.close();
 
-        return list;
+        return card;
     }
 
     public List<CardStruct> getAllCards()
@@ -112,7 +183,7 @@ public class CardsDB extends SQLiteOpenHelper {
         List<CardStruct> list = new ArrayList<>();
 
         // returning Cards
-        String query = "SELECT * FROM " + TABLE_Cards;
+        String query = "SELECT * FROM " + TABLE_CARDS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
 
@@ -121,9 +192,7 @@ public class CardsDB extends SQLiteOpenHelper {
         {
             do
             {
-                // TODO fix all new CardStruct() instances!
-                list.add(new CardStruct());
-
+                list.add(BuildStruct(c));
             }
             while (c.moveToNext());
         }
@@ -135,18 +204,33 @@ public class CardsDB extends SQLiteOpenHelper {
     }
 
     // Updating a single  record
-    public int updateNote(CardStruct n)
+    public void updateCard(CardStruct n)
     {
+        if(n.getID() == null)
+        {
+            // avoiding case of new card being updated vs added
+            return;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
-        // TODO v.put() etc etc
-
-        int r = db.update(TABLE_Cards, v,KEY_ID + "=?",
-                new String[]{String.valueOf(n.getID())});
+        PlaceValues(n, v);
 
         db.close();
+    }
 
-        return r;
+    public int countRows()
+    {
+        return  (int)DatabaseUtils.queryNumEntries(this.getReadableDatabase(), TABLE_CARDS);
+    }
+
+    public void removeCard(CardStruct n)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_CARDS + " WHERE " + KEY_ID + " = " + n.getID();
+        db.execSQL(query);
+
+        Toast.makeText(mContext, "Card deleted", Toast.LENGTH_SHORT).show();
     }
 
 }

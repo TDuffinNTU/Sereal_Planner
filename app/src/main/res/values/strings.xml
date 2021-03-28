@@ -1,18 +1,30 @@
 <resources>
     <string name="app_name">Sereal</string>
+
+    <!-- NavMenu string resources -->
     <string name="navOpen">Open</string>
     <string name="navClose">Close</string>
+
+    <!-- datetime formats -->
     <string name="date_format">dd/MM/yyyy</string>
-    <string name="time_format">HH:MM</string>
+    <string name="time_format">HH:mm a</string>
+
+    <!-- activity titles -->
     <string name="today_title">Today\'s Plan</string>
     <string name="cards_title">All Cards</string>
     <string name="calendar_title">Calendar</string>
     <string name="notes_title">Notes</string>
     <string name="settings_title">Settings</string>
-    <string name="PREF_DARK_THEME">dark_theme</string>
+    <string name="card_editor_title">Card Editor</string>
+
+    <!-- deleting database dialogs -->
     <string name="dialog_action">" database selected for deletion. \nYou cannot undo this action."</string>
     <string name="delete_confirm">Database Deleted.</string>
     <string name="delete_cancel">Cancelled</string>
+
+    <!-- Shared Preferences -->
     <string name="PREFS_LOCATION">prefs</string>
     <string name="PREFS_DYSLEXIC">dyslexic_mode</string>
+    <string name="PREF_DARK_THEME">dark_theme</string>
+
 </resources>

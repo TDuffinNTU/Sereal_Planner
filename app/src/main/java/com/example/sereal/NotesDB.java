@@ -3,6 +3,7 @@ package com.example.sereal;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
@@ -56,9 +57,7 @@ public class NotesDB extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
-        v.put(KEY_TITLE, n.getTitle());
-        v.put(KEY_CONTENTS, n.getContents());
-        v.put(KEY_DATE, n.getDate());
+        PlaceValues(n, v);
 
         // adding a row
         db.insert(TABLE_NOTES, null, v);
@@ -85,11 +84,7 @@ public class NotesDB extends SQLiteOpenHelper {
             return null;
         }
 
-        NoteStruct n = new NoteStruct(
-                Integer.parseInt(c.getString(0)),
-                c.getString(1),
-                c.getString(2),
-                c.getString(3));
+        NoteStruct n = BuildStruct(c);
 
         c.close();
         db.close();
@@ -97,7 +92,6 @@ public class NotesDB extends SQLiteOpenHelper {
         return n;
     }
 
-    // TODO if this becomes a problem it might be best to split out the query/looping code...
     // Query the database
     public List<NoteStruct> getNotesOnDate(String d)
     {
@@ -113,12 +107,7 @@ public class NotesDB extends SQLiteOpenHelper {
         {
             do
             {
-                nlist.add(new NoteStruct(
-                        Integer.parseInt(c.getString(0)),
-                        c.getString(1),
-                        c.getString(2),
-                        c.getString(3)));
-
+                nlist.add(BuildStruct(c));
             }
             while (c.moveToNext());
         }
@@ -143,12 +132,7 @@ public class NotesDB extends SQLiteOpenHelper {
         {
             do
             {
-                nlist.add(new NoteStruct(
-                        Integer.parseInt(c.getString(0)),
-                        c.getString(1),
-                        c.getString(2),
-                        c.getString(3)));
-
+                nlist.add(BuildStruct(c));
             }
             while (c.moveToNext());
         }
@@ -159,38 +143,58 @@ public class NotesDB extends SQLiteOpenHelper {
         return nlist;
     }
 
+    // Builds our Note
+    private NoteStruct BuildStruct(Cursor c) {
+        try
+        {
+            return new NoteStruct(
+                    Integer.parseInt(c.getString(0)),
+                    c.getString(1),
+                    c.getString(2),
+                    c.getString(3));
+        } catch (CursorIndexOutOfBoundsException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // place new/changed values into a ContentValues var
+    private void PlaceValues(NoteStruct n, ContentValues v) {
+        v.put(KEY_TITLE, n.getTitle());
+        v.put(KEY_CONTENTS, n.getContents());
+        v.put(KEY_DATE, n.getDate());
+    }
+
     // Updating a single  record
-    public int updateNote(NoteStruct n)
+    public void updateNote(NoteStruct n)
     {
         if(n.getID() == null)
         {
             // avoiding case of new notes being updated vs added
-            return -1;
+            return;
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
-        v.put(KEY_TITLE, n.getTitle());
-        v.put(KEY_CONTENTS, n.getContents());
-        v.put(KEY_DATE, n.getDate());
+        PlaceValues(n, v);
 
-        int r = db.update(TABLE_NOTES, v,KEY_ID + "=?",
+        db.update(TABLE_NOTES, v,KEY_ID + "=?",
                 new String[]{String.valueOf(n.getID())});
 
         db.close();
         Toast.makeText(mContext, "Note updated!", Toast.LENGTH_SHORT).show();
-
-        return r;
     }
 
-    public int removeNote(NoteStruct n)
+
+
+    public void removeNote(NoteStruct n)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "DELETE FROM " + TABLE_NOTES + " WHERE " + KEY_ID + " = " + String.valueOf(n.getID());
+        String query = "DELETE FROM " + TABLE_NOTES + " WHERE " + KEY_ID + " = " + n.getID();
         db.execSQL(query);
 
         Toast.makeText(mContext, "Note deleted!", Toast.LENGTH_SHORT).show();
-        return 1;
     }
 
 }

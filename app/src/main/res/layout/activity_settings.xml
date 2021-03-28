@@ -121,24 +121,13 @@
                         />
 
                     <Button
-                        android:id="@+id/deleteDaysBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Delete Routines"
-                        android:layout_marginStart="24dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/deleteNotesBtn"
-                        android:theme="@style/warnButton"
-                        />
-
-                    <Button
                         android:id="@+id/deleteCardsBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delete Routines"
                         android:layout_marginStart="24dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/deleteDaysBtn"
+                        app:layout_constraintTop_toBottomOf="@+id/deleteNotesBtn"
                         android:theme="@style/warnButton"
                         />
 

@@ -12,10 +12,12 @@
         android:fontStyle="normal"
         android:fontWeight="700"
         android:font="@font/odys_bold"/>
+
     <font
         android:fontStyle="italic"
         android:fontWeight="700"
-        android:font="@font/odys_bolditalic"/>
+        android:font="@font/odys_italic"/>
+
 </font-family>
 
 

@@ -2,21 +2,28 @@ package com.example.sereal;
 
 import android.content.Context;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+
 
 public class CardStruct {
 
     private Integer mID;
-    private String mTime;
-    private boolean mIsAlarm;
+    private LocalTime mTime;
+    private String mTitle;
+    private Boolean mIsAlarm;
     private NoteStruct mNote;
-    private boolean[] mDays;
+    private ArrayList<Boolean> mDays;
 
     public CardStruct(){}
-    public CardStruct(Integer id, String time, boolean alarm, NoteStruct note, boolean[] days)
+    public CardStruct(Integer id, String title, LocalTime time, boolean alarm, NoteStruct note, ArrayList<Boolean> days)
     {
         mID = id;
         mTime = time;
+        mTitle = title;
         mIsAlarm = alarm;
         mNote = note;
         mDays = days;
@@ -25,13 +32,12 @@ public class CardStruct {
     // used for ordering cards
     public boolean isAfterCard(Context context, CardStruct card)
     {
-        SimpleDateFormat format = new SimpleDateFormat(context.getString(R.string.time_format));
         try
         {
-            return format.parse(card.getmTime()).after((format.parse(this.mTime)));
+            return this.getTime().isAfter(card.getTime());
 
         } catch (Exception e) {
-            // Just return true if we encounter an error
+            // return true if we encounter an error
             e.printStackTrace();
             return true;
         }
@@ -46,36 +52,78 @@ public class CardStruct {
     }
 
 
-    public NoteStruct getmNote() {
+    public NoteStruct getNote() {
         return mNote;
     }
 
-    public void setmNote(NoteStruct mNote) {
+    public void setNote(NoteStruct mNote) {
         this.mNote = mNote;
     }
 
-    public boolean ismIsAlarm() {
+    public boolean isAlarm() {
         return mIsAlarm;
     }
 
-    public void setmIsAlarm(boolean mIsAlarm) {
+    public void setAlarm(boolean mIsAlarm) {
         this.mIsAlarm = mIsAlarm;
     }
 
-    public String getmTime() {
+    public LocalTime getTime() {
         return mTime;
     }
 
-    public void setmTime(String mTime) {
+    public void setTime(LocalTime mTime) {
         this.mTime = mTime;
     }
 
-    public boolean[] getmDays() {
+    public ArrayList<Boolean> getDays() {
         return mDays;
     }
 
-    public void setmDays(boolean[] mDays) {
+    public void setDays(ArrayList<Boolean> mDays) {
         this.mDays = mDays;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
+
+    @Override
+    public String toString()
+    {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss a");
+        StringBuilder data = null;
+
+        data = new StringBuilder("TITLE: ").append(getTitle());
+
+        data.append("\nCARD ID: ").append(getID());
+
+        data.append("\nTIME: ");
+
+        data.append(formatter.format(getTime())).append("\n");
+
+        for(boolean b : getDays())
+        {
+            data.append("DAY: ").append(b).append("\n");
+        }
+
+        data.append("ALARM: ").append(isAlarm());
+
+        if(getNote() != null)
+        {
+            data.append("\nNOTE ID: ").append(getNote().getID());
+            data.append("\nNOTE TITLE: ").append(getNote().getTitle());
+        } else {
+            data.append("\nNO NOTE ATTACHED");
+        }
+
+        return data.toString();
+
     }
 }
 
