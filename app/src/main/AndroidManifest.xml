@@ -7,21 +7,31 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/Theme.LightTheme">
 
         <activity android:name=".Settings" />
         <activity android:name=".Notes" />
         <activity android:name=".Cards" />
-        <activity android:name=".CalendarActivity" />
         <activity android:name=".CardEditor" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Fires the boot up receiver class when we reboot -->
+        <receiver android:name=".BootupReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Regular Alarm Receiver -->
+        <receiver android:name=".NotificationReceiver"/>
+
     </application>
 
 </manifest>

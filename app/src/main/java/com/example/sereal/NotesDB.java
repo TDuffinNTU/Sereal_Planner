@@ -19,7 +19,6 @@ public class NotesDB extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_CONTENTS = "contents";
-    private static final String KEY_DATE = "date";
     Context mContext;
 
     public NotesDB(Context context)
@@ -34,7 +33,6 @@ public class NotesDB extends SQLiteOpenHelper {
                 TABLE_NOTES + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_TITLE + " TEXT," +
-                KEY_DATE + " TEXT," +
                 KEY_CONTENTS + " TEXT)";
 
         db.execSQL(args);
@@ -65,12 +63,13 @@ public class NotesDB extends SQLiteOpenHelper {
         db.close();
     }
 
+
     // retrieving Note
     NoteStruct getNote(int id)
     {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor c = db.query(TABLE_NOTES, new String[] {KEY_ID, KEY_TITLE, KEY_CONTENTS, KEY_DATE},
+        Cursor c = db.query(TABLE_NOTES, new String[] {KEY_ID, KEY_TITLE, KEY_CONTENTS},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)},
                 null, null, null, null);
@@ -92,31 +91,6 @@ public class NotesDB extends SQLiteOpenHelper {
         return n;
     }
 
-    // Query the database
-    public List<NoteStruct> getNotesOnDate(String d)
-    {
-        List<NoteStruct> nlist = new ArrayList<>();
-
-        // returning notes made on 'd' date
-        String query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + KEY_DATE + " = " + d;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(query, null);
-
-        // looping through query results (if any)
-        if(c.moveToFirst())
-        {
-            do
-            {
-                nlist.add(BuildStruct(c));
-            }
-            while (c.moveToNext());
-        }
-
-        c.close();
-        db.close();
-
-        return nlist;
-    }
 
     public List<NoteStruct> getAllNotes()
     {
@@ -150,8 +124,8 @@ public class NotesDB extends SQLiteOpenHelper {
             return new NoteStruct(
                     Integer.parseInt(c.getString(0)),
                     c.getString(1),
-                    c.getString(2),
-                    c.getString(3));
+                    c.getString(2)
+                    );
         } catch (CursorIndexOutOfBoundsException e)
         {
             e.printStackTrace();
@@ -163,7 +137,6 @@ public class NotesDB extends SQLiteOpenHelper {
     private void PlaceValues(NoteStruct n, ContentValues v) {
         v.put(KEY_TITLE, n.getTitle());
         v.put(KEY_CONTENTS, n.getContents());
-        v.put(KEY_DATE, n.getDate());
     }
 
     // Updating a single  record

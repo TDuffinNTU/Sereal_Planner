@@ -5,33 +5,30 @@ public class NoteStruct {
     private Integer mID;
     private String mTitle;
     private String mContents;
-    private String mDate;
 
     public NoteStruct() { }
 
-    public NoteStruct(Integer id, String title, String date, String contents)
+    public NoteStruct(Integer id, String title, String contents)
     {
         mID = id;
         mTitle = title;
         mContents = contents;
-        mDate = date;
     }
 
-    public NoteStruct(String title, String date, String contents)
+    public NoteStruct(String title, String contents)
     {
         mTitle = title;
         mContents = contents;
-        mDate = date;
     }
 
     public void setID(Integer id) {mID = id;}
     public void setTitle(String s) {mTitle = s;}
     public void setContents(String s) {mContents = s;}
-    public void setDate(String d) {mDate = d;}
+
 
     public Integer getID() {return mID;}
     public String getTitle () {return mTitle;}
     public String getContents() {return  mContents;}
-    public String getDate() {return  mDate;}
+
 
 }

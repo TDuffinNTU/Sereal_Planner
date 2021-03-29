@@ -138,10 +138,6 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
             case R.id.nav_settings:
                 mDrawer.closeDrawers();
                 break;
-            case R.id.nav_calendar:
-                mIntent.setClass(Settings.this, CalendarActivity.class);
-                startActivity(mIntent);
-                break;
             case R.id.nav_cards:
                 mIntent.setClass(Settings.this, Cards.class);
                 startActivity(mIntent);

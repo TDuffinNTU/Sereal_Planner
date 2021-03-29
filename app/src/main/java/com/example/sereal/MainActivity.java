@@ -1,19 +1,23 @@
 package com.example.sereal;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -22,6 +26,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView mNavView;
     Toolbar mToolbar;
     Intent mIntent;
+    FloatingActionButton mPrevDay, mNextDay;
+
+    RecyclerView mRecycler;
+    CardsRecyclerAdapter mAdapter;
+    NotesDB mNotesDB;
+    CardsDB mCardsDB;
+    List<String> mDayStrings;
 
 
     @Override
@@ -34,9 +45,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer = findViewById(R.id.DrawerLayout);
         mNavView = findViewById(R.id.NavMenu);
         mToolbar = findViewById(R.id.Toolbar);
+        mRecycler = findViewById(R.id.CardRecycler);
 
         // Setting up navigation bar
-        mToolbar.setTitle(getString(R.string.today_title));
+
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar,
@@ -48,7 +60,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Intent init
         mIntent = new Intent(this,getClass());
+
+        // Recycler setup
+        mNotesDB = new NotesDB(this);
+        mCardsDB = new CardsDB(this);
+
+        mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB, AlarmsHandler.getTodayOfWeek());
+        mRecycler.setAdapter(mAdapter);
+        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mDayStrings = new ArrayList<>();
+        mDayStrings.add("Monday");
+        mDayStrings.add("Tuesday");
+        mDayStrings.add("Wednesday");
+        mDayStrings.add("Thursday");
+        mDayStrings.add("Friday");
+        mDayStrings.add("Saturday");
+        mDayStrings.add("Sunday");
+
+        mToolbar.setTitle(mDayStrings.get(AlarmsHandler.getTodayOfWeek()));
+
+        mNextDay = findViewById(R.id.NextDay);
+        mPrevDay = findViewById(R.id.PrevDay);
+
+        // increment/decrement days so user can see all day routines
+        mNextDay.setOnClickListener(v -> {
+            mAdapter.NextDay();
+            mToolbar.setTitle(mDayStrings.get(mAdapter.GetDay()));
+        });
+
+        mPrevDay.setOnClickListener(v -> {
+            mAdapter.PrevDay();
+            mToolbar.setTitle(mDayStrings.get(mAdapter.GetDay()));
+        });
+
+        AlarmsHandler.SetAllAlarms(this);
     }
+
 
     @Override
     public void onBackPressed()
@@ -73,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_today:
                 mDrawer.closeDrawers();
                 break;
-            case R.id.nav_calendar:
-                mIntent.setClass(MainActivity.this, CalendarActivity.class);
-                startActivity(mIntent);
-                break;
             case R.id.nav_cards:
                 mIntent.setClass(MainActivity.this, Cards.class);
                 startActivity(mIntent);
@@ -98,6 +142,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onRestart() {
         super.onRestart();
         mDrawer.closeDrawers();
+        mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB, AlarmsHandler.getTodayOfWeek());
+        mRecycler.setAdapter(mAdapter);
+        mToolbar.setTitle(mDayStrings.get(AlarmsHandler.getTodayOfWeek()));
     }
+
+
 
 }

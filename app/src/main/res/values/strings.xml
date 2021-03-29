@@ -26,5 +26,7 @@
     <string name="PREFS_LOCATION">prefs</string>
     <string name="PREFS_DYSLEXIC">dyslexic_mode</string>
     <string name="PREF_DARK_THEME">dark_theme</string>
+    <string name="card_id">CARD_ID</string>
+    <string name="alarm_channel">AlarmChannel</string>
 
 </resources>

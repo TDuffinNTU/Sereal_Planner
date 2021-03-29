@@ -12,18 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Cards extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,7 +22,7 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
     NavigationView mNavView;
     Toolbar mToolbar;
     Intent mIntent;
-    FloatingActionButton mTestMe;
+    FloatingActionButton mCreateCard;
     RecyclerView mRecycler;
     CardsRecyclerAdapter mAdapter;
     NotesDB mNotesDB;
@@ -48,7 +39,7 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
         mDrawer = findViewById(R.id.DrawerLayout);
         mNavView = findViewById(R.id.NavMenu);
         mToolbar = findViewById(R.id.Toolbar);
-        mTestMe = findViewById(R.id.CreateCardFAB);
+        mCreateCard = findViewById(R.id.CreateCardFAB);
         mRecycler = findViewById(R.id.CardRecycler);
 
         // Setting up navigation bar
@@ -66,21 +57,21 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
         mIntent = new Intent(this,getClass());
 
         // creating new card
-        mTestMe.setOnClickListener(v -> {
+        mCreateCard.setOnClickListener(v -> {
             mIntent.setClass(Cards.this, CardEditor.class);
             startActivity(mIntent);
         });
 
-        NotesDB mNotesDB = new NotesDB(this);
-        CardsDB mCardsDB = new CardsDB(this);
+        mNotesDB = new NotesDB(this);
+        mCardsDB = new CardsDB(this);
 
-        mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB);
+        mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB, CardsDB.DAY.NULL.ordinal());
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        AlarmsHandler.SetAllAlarms(this);
+
     }
-
-
 
 
     @Override
@@ -104,12 +95,8 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
             case R.id.nav_cards:
                 mDrawer.closeDrawers();
                 break;
-            case R.id.nav_calendar:
-                mIntent.setClass(Cards.this, CalendarActivity.class);
-                startActivity(mIntent);
-                break;
             case R.id.nav_today:
-                mIntent.setClass(Cards.this, Cards.class);
+                mIntent.setClass(Cards.this, MainActivity.class);
                 startActivity(mIntent);
                 break;
             case R.id.nav_notes:
@@ -125,9 +112,12 @@ public class Cards extends AppCompatActivity implements NavigationView.OnNavigat
         return true;
     }
 
+
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         mDrawer.closeDrawers();
+        mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB, CardsDB.DAY.NULL.ordinal());
+        mRecycler.setAdapter(mAdapter);
     }
 }

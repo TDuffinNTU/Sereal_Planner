@@ -17,8 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.time.format.DateTimeFormatter;
-
 
 public class Notes extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,7 +29,6 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
     RecyclerView mRecycler;
     FloatingActionButton mNewNoteFAB;
     NotesRecyclerAdapter mAdapter;
-    DateTimeFormatter mDTFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +61,19 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         // loading from DB
         mNotesDatabase = new NotesDB(this);
 
-
         // Recycler view for notes
         mRecycler = findViewById(R.id.NotesRecycler);
         mAdapter = new NotesRecyclerAdapter(this, mNotesDatabase);
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        mDTFormat = DateTimeFormatter.ofPattern(getString(R.string.date_format));
+        // adding a new note
         mNewNoteFAB.setOnClickListener(v -> {
            mAdapter.AddNewNote();
            mRecycler.scrollToPosition(0);
         });
 
     }
-
-
 
     @Override
     public void onBackPressed()
@@ -94,7 +88,6 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         }
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
@@ -102,10 +95,6 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
         {
             case R.id.nav_notes:
                 mDrawer.closeDrawers();
-                break;
-            case R.id.nav_calendar:
-                mIntent.setClass(Notes.this, CalendarActivity.class);
-                startActivity(mIntent);
                 break;
             case R.id.nav_cards:
                 mIntent.setClass(Notes.this, Cards.class);
@@ -120,7 +109,6 @@ public class Notes extends AppCompatActivity implements NavigationView.OnNavigat
                 startActivity(mIntent);
                 break;
         }
-
         return true;
     }
 

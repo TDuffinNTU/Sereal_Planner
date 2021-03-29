@@ -22,7 +22,6 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     List<NoteStruct> mNotes;
     Context mContext;
     NotesDB mNotesDatabase;
-    DateTimeFormatter mDTFormat;
 
 
     public NotesRecyclerAdapter(@NonNull Context context, NotesDB database)
@@ -30,12 +29,12 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         mNotes = database.getAllNotes();
         mNotesDatabase = database;
         mContext = context;
-        mDTFormat = DateTimeFormatter.ofPattern(mContext.getString(R.string.date_format));
+
     }
 
     public void AddNewNote()
     {
-        NoteStruct n = new NoteStruct("New Note", mDTFormat.format(LocalDateTime.now()),"Write your note...");
+        NoteStruct n = new NoteStruct("Title", "Body");
         mNotes.add(0, n);
         this.notifyDataSetChanged();
     }
@@ -52,8 +51,8 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.mNote = mNotes.get(position);
-        holder.mContents.setText(mNotes.get(position).getContents());
-        holder.mTitle.setText(mNotes.get(position).getTitle());
+        holder.mContents.setText(holder.mNote.getContents());
+        holder.mTitle.setText(holder.mNote.getTitle());
     }
 
     @Override

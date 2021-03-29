@@ -8,6 +8,7 @@
     android:gravity="center_vertical">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/CardHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -15,6 +16,7 @@
         app:cardMaxElevation="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
@@ -27,14 +29,14 @@
                 android:layout_margin="16dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
+                android:includeFontPadding="false"
                 android:text="Headline"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/deleteFAB"
                 app:layout_constraintHorizontal_bias="0.061"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:includeFontPadding="false"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -67,12 +69,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="4dp"
+                android:includeFontPadding="false"
                 android:text="8:00 AM"
                 android:textSize="24dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
-                android:includeFontPadding="false"/>
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -92,13 +94,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="32dp"
+                android:includeFontPadding="false"
                 android:text="True"
                 android:textAlignment="textEnd"
                 android:textSize="24dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
-                android:includeFontPadding="false"/>
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -125,6 +127,7 @@
                     android:button="@drawable/round_btn"
                     android:checked="false"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="M"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -137,6 +140,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="T"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -149,6 +153,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="W"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -161,6 +166,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="T"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -173,6 +179,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="F"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -185,6 +192,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="S"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -196,6 +204,7 @@
                     android:background="@drawable/round_btn"
                     android:button="@drawable/round_btn"
                     android:clickable="false"
+                    android:gravity="center"
                     android:text="S"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
@@ -216,12 +225,15 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:padding="16dp">
 
                     <TextView
                         android:id="@+id/noteTitle"
                         android:layout_width="290dp"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:inputType="text"
                         android:maxLength="30"
                         android:text="Headline"
@@ -229,8 +241,7 @@
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:includeFontPadding="false"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
 

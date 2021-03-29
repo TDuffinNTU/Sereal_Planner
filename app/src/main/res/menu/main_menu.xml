@@ -10,16 +10,13 @@
             android:icon="@drawable/ic_baseline_sticky_note_2_24"
             android:title="@string/cards_title" />
         <item
-            android:id="@+id/nav_calendar"
-            android:icon="@drawable/ic_baseline_calendar_today_24"
-            android:title="@string/calendar_title" />
-        <item
             android:id="@+id/nav_notes"
             android:icon="@drawable/ic_baseline_edit_24"
             android:title="@string/notes_title" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
-            android:title="@string/settings_title" />
+            android:title="@string/settings_title"
+            />
     </group>
 </menu>

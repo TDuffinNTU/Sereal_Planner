@@ -12,7 +12,9 @@ import android.widget.Toast;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CardsDB extends SQLiteOpenHelper {
 
@@ -36,11 +38,19 @@ public class CardsDB extends SQLiteOpenHelper {
     private final Context mContext;
     private final DateTimeFormatter mFormatter;
 
+    public enum DAY
+    {
+        MON, TUE, WED, THU, FRI, SAT, SUN, NULL
+
+    }
+
     public CardsDB(Context context)
     {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
         mFormatter = DateTimeFormatter.ofPattern(mContext.getString(R.string.time_format));
+
+
     }
 
     @Override
@@ -87,6 +97,8 @@ public class CardsDB extends SQLiteOpenHelper {
         db.insert(TABLE_CARDS, null, v);
         db.close();
     }
+
+
 
     private void PlaceValues(CardStruct n, ContentValues v) {
         // places our data values into ContentValues
@@ -203,19 +215,41 @@ public class CardsDB extends SQLiteOpenHelper {
         return list;
     }
 
+    public List<CardStruct> getCardsOnDay(Integer day)
+    {
+        List<CardStruct> list = getAllCards();
+
+        if (day.equals(DAY.NULL.ordinal()))
+        {
+            return list;
+        }
+
+        List<CardStruct> result = new ArrayList<>();
+
+        for(CardStruct c : list)
+        {
+            if(c.getDays().get(day))
+            {
+                result.add(c);
+            }
+        }
+
+        return result;
+    }
+
     // Updating a single  record
     public void updateCard(CardStruct n)
     {
         if(n.getID() == null)
         {
-            // avoiding case of new card being updated vs added
             return;
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues v = new ContentValues();
         PlaceValues(n, v);
-
+        db.update(TABLE_CARDS, v,KEY_ID + "=?",
+                new String[]{String.valueOf(n.getID())});
         db.close();
     }
 

@@ -24,6 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,14 +83,43 @@ public class CardEditor extends AppCompatActivity implements NavigationView.OnNa
         mNavView.setNavigationItemSelectedListener(this);
 
         // Intent init
-        mIntent = new Intent(this,getClass());
+        mIntent = getIntent();
+        try {
+            int intID = mIntent.getIntExtra(getString(R.string.card_id), -1);
+
+            CardsDB cdb = new CardsDB(this);
+            if (cdb.getCard(intID) != null)
+            {
+                mCard = cdb.getCard(intID);
+                mTitle.setText(mCard.getTitle());
+
+                ArrayList<Boolean> days = mCard.getDays();
+
+                mMon.setChecked(days.get(0));
+                mTue.setChecked(days.get(1));
+                mWed.setChecked(days.get(2));
+                mThur.setChecked(days.get(3));
+                mFri.setChecked(days.get(4));
+                mSat.setChecked(days.get(5));
+                mSun.setChecked(days.get(6));
+
+                mTimePicker.setHour((mCard.getTime().getHour()));
+                mTimePicker.setMinute((mCard.getTime().getMinute()));
+
+                mAlarm.setChecked(mCard.isAlarm());
+            }
+            else {
+                mCard = new CardStruct();
+            }
+        } catch (Exception e)
+        {
+            mCard = new CardStruct();
+        }
 
         // Setting up Note selection
         NotesDB ndb = new NotesDB(this);
         mAllNotes = ndb.getAllNotes();
         int index = 0;
-
-        mCard = new CardStruct();
 
         // NoteSelector init --> Selected note stored here!
         for(NoteStruct n : mAllNotes)
@@ -99,8 +129,19 @@ public class CardEditor extends AppCompatActivity implements NavigationView.OnNa
             tv.setId(index);
             tv.setTextSize(18);
             tv.setText(n.getTitle());
-            tv.setTextColor(ThemeSetter.GetDarkBool(getApplicationContext()) ?
+            try {
+                if (n.getID().equals(mCard.getNote().getID())) {
+                    tv.setTextColor(getColor(R.color.red));
+                } else {
+                    tv.setTextColor(ThemeSetter.GetDarkBool(getApplicationContext()) ?
                     getColor(R.color.white) : getColor(R.color.black));
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                tv.setTextColor(ThemeSetter.GetDarkBool(getApplicationContext()) ?
+                getColor(R.color.white) : getColor(R.color.black));
+            }
+
             tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
             // get selected note's data
@@ -134,23 +175,24 @@ public class CardEditor extends AppCompatActivity implements NavigationView.OnNa
         // FAB setup
         mSaveData.setOnClickListener(v -> {
             CardsDB cdb = new CardsDB(getApplicationContext());
+
+            // load data and push to db
+            ArrayList<Boolean> days = new ArrayList<>();
+            days.add(mMon.isChecked());
+            days.add(mTue.isChecked());
+            days.add(mWed.isChecked());
+            days.add(mThur.isChecked());
+            days.add(mFri.isChecked());
+            days.add(mSat.isChecked());
+            days.add(mSun.isChecked());
+            mCard.setDays(days);
+
+            mCard.setTitle(mTitle.getText().toString());
+            mCard.setTime(LocalTime.of(mTimePicker.getHour(), mTimePicker.getMinute()));
+            mCard.setAlarm(mAlarm.isChecked());
+
             if(mCard.getID() == null)
             {
-
-                // load data and push to db
-                ArrayList<Boolean> days = new ArrayList<>();
-                days.add(mMon.isChecked());
-                days.add(mTue.isChecked());
-                days.add(mWed.isChecked());
-                days.add(mThur.isChecked());
-                days.add(mFri.isChecked());
-                days.add(mSat.isChecked());
-                days.add(mSun.isChecked());
-                mCard.setDays(days);
-
-                mCard.setTitle(mTitle.getText().toString());
-                mCard.setTime(LocalTime.of(mTimePicker.getHour(), mTimePicker.getMinute()));
-                mCard.setAlarm(mAlarm.isChecked());
                 cdb.addCard(mCard);
                 Toast.makeText(getApplicationContext(), "Saved new Card", Toast.LENGTH_SHORT).show();
             } else {
@@ -158,12 +200,12 @@ public class CardEditor extends AppCompatActivity implements NavigationView.OnNa
                 Toast.makeText(getApplicationContext(), "Updated Card", Toast.LENGTH_SHORT).show();
             }
 
+            finish();
+
         });
 
 
     }
-
-
 
 
     @Override
@@ -190,13 +232,8 @@ public class CardEditor extends AppCompatActivity implements NavigationView.OnNa
                 mIntent.setClass(CardEditor.this, MainActivity.class);
                 startActivity(mIntent);
                 break;
-            case R.id.nav_calendar:
-                mIntent.setClass(CardEditor.this, CalendarActivity.class);
-                startActivity(mIntent);
-                break;
             case R.id.nav_cards:
-                mIntent.setClass(CardEditor.this, Cards.class);
-                startActivity(mIntent);
+                finish();
                 break;
             case R.id.nav_notes:
                 mIntent.setClass(CardEditor.this, Notes.class);

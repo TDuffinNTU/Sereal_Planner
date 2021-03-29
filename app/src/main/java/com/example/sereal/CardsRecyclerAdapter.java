@@ -1,12 +1,15 @@
 package com.example.sereal;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -26,10 +29,12 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
     CardsDB mCardsDatabase;
     NotesDB mNotesDatabase;
 
+    int mDay;
 
-    public CardsRecyclerAdapter(@NonNull Context context, CardsDB database, NotesDB notesDB)
+    public CardsRecyclerAdapter(@NonNull Context context, CardsDB database, NotesDB notesDB, Integer day)
     {
-        mCards = database.getAllCards();
+        mCards = database.getCardsOnDay(day);
+        mDay = day;
         mCardsDatabase = database;
         mNotesDatabase = notesDB;
         mContext = context;
@@ -47,6 +52,8 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.mCard = mCards.get(position);
+
+        holder.mTitle.setText(holder.mCard.getTitle());
 
         ArrayList<Boolean> days = holder.mCard.getDays();
 
@@ -68,14 +75,13 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
 
         if(holder.mCard.getNote() != null)
         {
-            holder.mNoteContent.setText(holder.mCard.getNote().getContents());
+            String content = holder.mCard.getNote().getContents();
+            holder.mNoteContent.setText(content);
             holder.mNoteTitle.setText(holder.mCard.getNote().getTitle());
         }
         else {
             holder.mNoteHolder.setVisibility(View.GONE);
         }
-
-
     }
 
     @Override
@@ -83,6 +89,36 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         return mCards.size();
     }
 
+    public int GetDay() { return mDay; }
+
+    public void SetDay(Integer day)
+    {
+        mDay = day;
+        mCards = mCardsDatabase.getCardsOnDay(day);
+        notifyDataSetChanged();
+    }
+
+    public void NextDay()
+    {
+        mDay ++;
+        if(mDay == CardsDB.DAY.NULL.ordinal())
+        {
+            mDay = CardsDB.DAY.MON.ordinal();
+        }
+
+        SetDay(mDay);
+    }
+
+    public void PrevDay()
+    {
+        mDay --;
+        if(mDay < CardsDB.DAY.MON.ordinal())
+        {
+            mDay = CardsDB.DAY.SUN.ordinal();
+        }
+
+        SetDay(mDay);
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -92,7 +128,8 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         CheckBox mMon,mTue,mWed,mThur,mFri,mSat,mSun;
         TextView mTime, mAlarm, mTitle, mNoteTitle, mNoteContent;
         CardView mNoteHolder;
-
+        LinearLayout mDaysButtons;
+        CardView mCardHolder;
 
         public ViewHolder(@NonNull View itemView)
         {
@@ -106,6 +143,8 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
             mFri =  itemView.findViewById(R.id.friday);
             mSat =  itemView.findViewById(R.id.saturday);
             mSun =  itemView.findViewById(R.id.sunday);
+            mDaysButtons = itemView.findViewById(R.id.linearLayout);
+            mCardHolder = itemView.findViewById(R.id.CardHolder);
 
             // time and alarm
             mTime = itemView.findViewById(R.id.cardTime);
@@ -124,15 +163,31 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
               if(mCard.getID() != null)
               {
                   mCardsDatabase.removeCard(mCard);
+                  if(mCard.isAlarm())
+                  {
+                      // cancel alarm associated with this card
+                      AlarmsHandler.CancelAlarm(mContext, mCard.getID());
+                  }
               }
               notifyItemRemoved(this.getAdapterPosition());
             });
 
+            // We can hide some extra stuff if we're in routine view
+            if(mContext.getClass() == MainActivity.class)
+            {
+                mDaysButtons.setVisibility(View.GONE);
+                mDelete.setVisibility(View.GONE);
+            }
 
-
+            // opening activity if we click the card
+            mCardHolder.setOnClickListener(v -> {
+                Intent intent = new Intent(mContext, CardEditor.class);
+                intent.putExtra(mContext.getString(R.string.card_id), mCard.getID());
+                mContext.startActivity(intent);
+            });
         }
-
-
     }
+
+
 }
 
