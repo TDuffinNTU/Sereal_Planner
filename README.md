@@ -2,3 +2,4 @@
 
 # Sereal Planner
 Serial-based personal routines/planning app.
+Written in Java for Android SDK 30+
