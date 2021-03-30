@@ -21,7 +21,6 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
     DrawerLayout mDrawer;
     NavigationView mNavView;
     Toolbar mToolbar;
@@ -37,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeSetter.GetTheme(this); // Set's context theme to light/dark
+        // Set's context theme to light/dark
+        ThemeSetter.GetTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDayStrings.add("Saturday");
         mDayStrings.add("Sunday");
 
-        mToolbar.setTitle(mDayStrings.get(AlarmsHandler.getTodayOfWeek()));
+        mToolbar.setTitle(getString(R.string.today_title));
 
         mNextDay = findViewById(R.id.NextDay);
         mPrevDay = findViewById(R.id.PrevDay);
@@ -86,15 +86,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // increment/decrement days so user can see all day routines
         mNextDay.setOnClickListener(v -> {
             mAdapter.NextDay();
-            mToolbar.setTitle(mDayStrings.get(mAdapter.GetDay()));
+            SetTitle();
         });
 
         mPrevDay.setOnClickListener(v -> {
             mAdapter.PrevDay();
-            mToolbar.setTitle(mDayStrings.get(mAdapter.GetDay()));
+            SetTitle();
         });
 
+        // set android alarms
         AlarmsHandler.SetAllAlarms(this);
+    }
+
+    private void SetTitle()
+    {
+        if(mAdapter.GetDay() == AlarmsHandler.getTodayOfWeek())
+        {
+            mToolbar.setTitle(getString(R.string.today_title));
+        }
+        else {
+            mToolbar.setTitle(mDayStrings.get(mAdapter.GetDay()));
+        }
     }
 
 
@@ -144,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer.closeDrawers();
         mAdapter = new CardsRecyclerAdapter(this, mCardsDB, mNotesDB, AlarmsHandler.getTodayOfWeek());
         mRecycler.setAdapter(mAdapter);
-        mToolbar.setTitle(mDayStrings.get(AlarmsHandler.getTodayOfWeek()));
+        mToolbar.setTitle(getString(R.string.today_title));
     }
 
 

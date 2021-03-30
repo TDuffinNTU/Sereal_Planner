@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,8 +213,45 @@ public class CardsDB extends SQLiteOpenHelper {
         c.close();
         db.close();
 
+        QuickSort(list,0, list.size()-1);
         return list;
     }
+
+    // CODE SNIPPET ADAPTED FROM: https://www.baeldung.com/java-quicksort
+    private void QuickSort(List<CardStruct> cards, int begin, int end)
+    {
+        if (begin < end)
+        {
+            int pivot = SetPivot(cards, begin, end);
+            QuickSort(cards, begin, pivot-1);
+            QuickSort(cards, pivot+1, end);
+        }
+    }
+
+    private int SetPivot(List<CardStruct> cards, int begin, int end)
+    {
+        CardStruct pivot = cards.get(end);
+        int i = (begin-1);
+
+        for (int j = begin; j < end; j++)
+        {
+            if(cards.get(j).getTime().isBefore(pivot.getTime()))
+            {
+                i++;
+
+                CardStruct temp = cards.get(i);
+                cards.set(i, cards.get(j));
+                cards.set(j, temp);
+            }
+        }
+
+        CardStruct temp = cards.get(i+1);
+        cards.set(i+1, cards.get(end));
+        cards.set(end, temp);
+
+        return i+1;
+    }
+    // END OF CODE SNIPPET
 
     public List<CardStruct> getCardsOnDay(Integer day)
     {

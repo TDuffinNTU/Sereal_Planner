@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -34,6 +36,9 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
     public CardsRecyclerAdapter(@NonNull Context context, CardsDB database, NotesDB notesDB, Integer day)
     {
         mCards = database.getCardsOnDay(day);
+
+        // Hacky, but just swap the last element because it's clearly bugged in a way i cant fix rn
+
         mDay = day;
         mCardsDatabase = database;
         mNotesDatabase = notesDB;
@@ -57,6 +62,7 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
 
         ArrayList<Boolean> days = holder.mCard.getDays();
 
+        // setting checked/unchecked
         holder.mMon.setChecked(days.get(0));
         holder.mTue.setChecked(days.get(1));
         holder.mWed.setChecked(days.get(2));
@@ -65,6 +71,7 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         holder.mSat.setChecked(days.get(5));
         holder.mSun.setChecked(days.get(6));
 
+        // show time
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(mContext.getString(R.string.time_format));
         holder.mTime.setText(dtf.format(holder.mCard.getTime()));
 
@@ -73,6 +80,7 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
 
         holder.mAlarm.setText(alarm);
 
+        // get note if any
         if(holder.mCard.getNote() != null)
         {
             String content = holder.mCard.getNote().getContents();
@@ -82,6 +90,13 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         else {
             holder.mNoteHolder.setVisibility(View.GONE);
         }
+
+        // We can hide some extra stuff if we're in routine view
+        if(mContext.getClass() == MainActivity.class)
+        {
+            holder.mDaysButtons.setVisibility(View.GONE);
+            holder.mDelete.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -89,8 +104,10 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         return mCards.size();
     }
 
+
     public int GetDay() { return mDay; }
 
+    // filter days according to day
     public void SetDay(Integer day)
     {
         mDay = day;
@@ -98,6 +115,7 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
         notifyDataSetChanged();
     }
 
+    // inc/dec day
     public void NextDay()
     {
         mDay ++;
@@ -122,11 +140,10 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
-
         FloatingActionButton mDelete;
         CardStruct mCard;
         CheckBox mMon,mTue,mWed,mThur,mFri,mSat,mSun;
-        TextView mTime, mAlarm, mTitle, mNoteTitle, mNoteContent;
+        TextView mTime, mAlarm, mTitle, mNoteTitle, mNoteContent, mTimeSubheader, mAlarmSubheader;
         CardView mNoteHolder;
         LinearLayout mDaysButtons;
         CardView mCardHolder;
@@ -150,6 +167,8 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
             mTime = itemView.findViewById(R.id.cardTime);
             mAlarm = itemView.findViewById(R.id.cardAlarm);
             mTitle = itemView.findViewById(R.id.cardTitle);
+            mTimeSubheader = itemView.findViewById(R.id.TimeSubheader);
+            mAlarmSubheader = itemView.findViewById(R.id.AlarmSubheader);
 
             // hiding or filling in notes data
             mNoteTitle = itemView.findViewById(R.id.noteTitle);
@@ -171,13 +190,6 @@ public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdap
               }
               notifyItemRemoved(this.getAdapterPosition());
             });
-
-            // We can hide some extra stuff if we're in routine view
-            if(mContext.getClass() == MainActivity.class)
-            {
-                mDaysButtons.setVisibility(View.GONE);
-                mDelete.setVisibility(View.GONE);
-            }
 
             // opening activity if we click the card
             mCardHolder.setOnClickListener(v -> {
